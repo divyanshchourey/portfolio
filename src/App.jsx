@@ -112,7 +112,7 @@ const Hero = () => {
   const [text, setText] = useState('');
   const [roleIndex, setRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const roles = ["Software Engineer", "Web Developer", "Data Science Enthusiast"];
+  const roles = ["Software Engineer", "Web Developer", "Data Science Enthusiast", "App developer"];
   const typingSpeed = 150;
   const deletingSpeed = 75;
   const pauseTime = 2000;
@@ -324,10 +324,10 @@ const Projects = () => {
       link: "#"
     },
     {
-      title: "Conway’s Game of Life",
-      desc: "Interactive web simulation of the famous cellular automaton using pure HTML/CSS and JavaScript.",
-      tech: ["HTML", "CSS", "JavaScript"],
-      link: "https://github.com/divyanshchourey/Conway-game-of-life"
+      title: "Health Center Automation",
+      desc: "An one stop solution for managing health center with seperate login and dashboard for patient, doctors, staff and admin too for managing all.",
+      tech: ["React", "Vite", "Firebase", "Python", "Fastapi"],
+      link: "https://github.com/divyanshchourey/healthcenter_automation"
     },
     {
       title: "Keypad Door Lock System",
@@ -411,7 +411,7 @@ const Experience = () => (
     <div className="space-y-8 max-w-3xl mx-auto">
       <div className="relative pl-8 border-l border-primary-500/30">
         <div className="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-primary-500 shadow-[0_0_10px_rgba(14,165,233,0.5)]" />
-        <div className="mb-1 text-primary-500 font-bold">2024 (2 Months)</div>
+        <div className="mb-1 text-primary-500 font-bold">2025 (2 Months)</div>
         <h4 className="text-xl font-bold">Internship at ACAPL</h4>
         <p className="text-slate-500 italic mb-2">Anubha Chauhan & Associates</p>
         <p className="text-slate-600 dark:text-slate-400">Gained practical exposure in a professional environment, working on software solutions and team collaborations.</p>
@@ -428,41 +428,119 @@ const Experience = () => (
   </Section>
 );
 
-const Contact = () => (
-  <Section id="contact" title="Get In Touch">
-    <div className="grid md:grid-cols-2 gap-12">
-      <div className="space-y-8">
-        <div>
-          <h3 className="text-2xl font-bold mb-4">Let's talk about everything!</h3>
-          <p className="text-slate-600 dark:text-slate-400">
-            Don't like forms? Send me an email at <span className="text-primary-500 font-medium">divyanshchourey99@gmail.com</span>
-          </p>
+const Contact = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState({ type: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatus({ type: '', message: '' });
+
+    try {
+      // Replace with your actual Firebase Function URL after deployment if different
+      // For personal projects, it usually follows: https://REGION-PROJECT_ID.cloudfunctions.net/sendEmail
+      const response = await fetch('https://us-central1-divyansh-portfolio-2ff07.cloudfunctions.net/sendEmail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatus({ type: 'success', message: 'Message sent successfully!' });
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setStatus({ type: 'error', message: data.message || 'Something went wrong.' });
+      }
+    } catch (error) {
+      setStatus({ type: 'error', message: 'Failed to connect to the server.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Section id="contact" title="Get In Touch">
+      <div className="grid md:grid-cols-2 gap-12">
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-2xl font-bold mb-4">Let's talk about everything!</h3>
+            <p className="text-slate-600 dark:text-slate-400">
+              Don't like forms? Send me an email at <span className="text-primary-500 font-medium">divyanshchourey99@gmail.com</span>
+            </p>
+          </div>
+
+          <div className="flex gap-4">
+            <a href="https://www.linkedin.com/in/divyansh-chourey-a52131298" target="_blank" rel="noopener noreferrer" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
+              <Linkedin size={24} />
+            </a>
+            <a href="https://github.com/divyanshchourey" target="_blank" rel="noopener noreferrer" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
+              <Github size={24} />
+            </a>
+            <a href="mailto:divyanshchourey99@gmail.com" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
+              <Mail size={24} />
+            </a>
+          </div>
         </div>
 
-        <div className="flex gap-4">
-          <a href="https://www.linkedin.com/in/divyansh-chourey-a52131298" target="_blank" rel="noopener noreferrer" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
-            <Linkedin size={24} />
-          </a>
-          <a href="https://github.com/divyanshchourey" target="_blank" rel="noopener noreferrer" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
-            <Github size={24} />
-          </a>
-          <a href="mailto:divyanshchourey99@gmail.com" className="p-4 rounded-full bg-slate-100 dark:bg-slate-800 hover:text-primary-500 transition-colors">
-            <Mail size={24} />
-          </a>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+            className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors"
+          />
+          <textarea
+            name="message"
+            placeholder="Message"
+            rows="5"
+            value={formData.message}
+            onChange={handleChange}
+            required
+            className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors"
+          ></textarea>
+
+          {status.message && (
+            <div className={cn(
+              "p-4 rounded-xl text-sm font-medium",
+              status.type === 'success' ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"
+            )}>
+              {status.message}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? 'Sending...' : 'Send Message'}
+          </button>
+        </form>
       </div>
-
-      <form className="space-y-4">
-        <input type="text" placeholder="Name" className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors" />
-        <input type="email" placeholder="Email" className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors" />
-        <textarea placeholder="Message" rows="5" className="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-primary-500 transition-colors"></textarea>
-        <button type="submit" className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold transition-all shadow-lg">
-          Send Message
-        </button>
-      </form>
-    </div>
-  </Section>
-);
+    </Section>
+  );
+};
 
 const Footer = () => (
   <footer className="py-12 border-t border-slate-200 dark:border-slate-800 text-center px-6">

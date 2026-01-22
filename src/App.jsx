@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Menu, X, Github, Linkedin, Mail } from 'lucide-react';
 import { cn } from './lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 
 const Section = ({ id, title, children, className }) => (
   <section id={id} className={cn("py-20 px-6", className)}>
@@ -443,25 +444,35 @@ const Contact = () => {
     setIsSubmitting(true);
     setStatus({ type: '', message: '' });
 
+    // IMPORTANT: Replace these with your actual IDs from emailjs.com
+    const SERVICE_ID = 'service_wruoo6g';
+    const TEMPLATE_ID = 'template_g5e5ah8';
+    const PUBLIC_KEY = 'NiRgKTOhNGH6Kdynz';
+
     try {
-      // Replace with your actual Firebase Function URL after deployment if different
-      // For personal projects, it usually follows: https://REGION-PROJECT_ID.cloudfunctions.net/sendEmail
-      const response = await fetch('https://us-central1-divyansh-portfolio-2ff07.cloudfunctions.net/sendEmail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_name: 'Divyansh'
+      };
 
-      const data = await response.json();
+      const response = await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        templateParams,
+        PUBLIC_KEY
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         setStatus({ type: 'success', message: 'Message sent successfully!' });
         setFormData({ name: '', email: '', message: '' });
       } else {
-        setStatus({ type: 'error', message: data.message || 'Something went wrong.' });
+        setStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
       }
     } catch (error) {
-      setStatus({ type: 'error', message: 'Failed to connect to the server.' });
+      console.error('EmailJS Error:', error);
+      setStatus({ type: 'error', message: 'Failed to send message. Please check your configuration.' });
     } finally {
       setIsSubmitting(false);
     }

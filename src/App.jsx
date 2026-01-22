@@ -327,13 +327,13 @@ const Projects = () => {
       title: "Conway’s Game of Life",
       desc: "Interactive web simulation of the famous cellular automaton using pure HTML/CSS and JavaScript.",
       tech: ["HTML", "CSS", "JavaScript"],
-      link: "#"
+      link: "https://github.com/divyanshchourey/Conway-game-of-life"
     },
     {
       title: "Keypad Door Lock System",
       desc: "Microcontroller-based security system with EEPROM for password storage and solenoid lock control.",
       tech: ["C", "AVR/PIC", "EEPROM", "Solenoid"],
-      link: "#"
+      link: "https://github.com/divyanshchourey/Keypad_Doorlock"
     },
     {
       title: "Self-Balancing Robot",
